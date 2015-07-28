@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/controller_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_name"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:singleLine="true" 
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/phonenumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_number"
+        android:inputType="phone"
+        android:maxLines="1"
+        android:singleLine="true" 
+        android:maxLength="11"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"/>
+    
+<!--     <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       	android:layout_marginTop="16dp"
+       	style="?android:attr/buttonBarButtonStyle">
+        <Button
+	        android:id="@+id/cancel_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/add_controller"
+	        android:textStyle="bold" />
+        <Button
+	        android:id="@+id/add_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/cancel"
+	        android:textStyle="bold" />
+        
+    </LinearLayout> -->
+
+</LinearLayout>
