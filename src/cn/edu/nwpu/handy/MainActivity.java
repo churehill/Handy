@@ -13,17 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,13 +37,13 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	final private Uri SMS_INBOX = Uri.parse("content://sms/");
-	private SmsObserver smsObserver;  
-	private int lastID = 0;
-	private boolean runningStatus = true;
     private SQLiteDatabase db;
     private ListView recordsListView;
     private Switch statusSwitch;
+    private Intent serviceIntent;
+    
+    private boolean isForeground = true;
+    private boolean needFlush = false;
    
     
     @Override
@@ -56,20 +53,45 @@ public class MainActivity extends Activity {
 
         initDatabase();
         
-        smsObserver = new SmsObserver(this, smsHandler);
-        getContentResolver().registerContentObserver(SMS_INBOX, true, smsObserver);
-        
+        serviceIntent = new Intent(this, SmsService.class);
+        startService(serviceIntent);
+               
         recordsListView = (ListView)findViewById(R.id.records);
         recordsListView.setOnItemClickListener(recordItemClickListener);
         
         statusSwitch = (Switch)findViewById(R.id.status_swith);
         statusSwitch.setOnCheckedChangeListener(statusListener);
-        
-        flushRecords();
-
-        
     }
 
+    @Override 
+    protected void onStart() {
+    	super.onStart();
+        flushRecords();   
+        needFlush = false;
+    	LocalBroadcastManager.getInstance(this).registerReceiver(updateReceiver, new IntentFilter(SmsService.UPDATE_RECORD));
+    }
+    
+    @Override
+    protected void onStop() {
+    	LocalBroadcastManager.getInstance(this).unregisterReceiver(updateReceiver);
+    	super.onStop();
+    }
+    
+    @Override
+    protected void onPause() {
+    	isForeground = false;
+    	super.onPause();
+    }
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	isForeground = true;
+    	if (needFlush) {
+    		flushRecords();
+    		needFlush = false;
+    	}
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,9 +118,21 @@ public class MainActivity extends Activity {
     	@Override
     	public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
     		if (isChecked) 
-    			runningStatus = true;
+    			startService(serviceIntent);
     		else 
-    			runningStatus = false;
+    			stopService(serviceIntent);
+    	}
+    };
+    
+    private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent){
+    		if (isForeground) {
+    			flushRecords();
+    			needFlush = false;
+    		}
+    		else
+    			needFlush = true;
     	}
     };
     
@@ -106,7 +140,7 @@ public class MainActivity extends Activity {
     	try {
     		String destPath = "/data/data/" + getPackageName() + "/databases";
     		File f = new File(destPath);
-    		if (!f.exists()) {
+    		//if (!f.exists()) {
     			f.mkdirs();
     			f.createNewFile();
     			
@@ -120,7 +154,7 @@ public class MainActivity extends Activity {
     			}
     			inputStream.close();
     			outputStream.close();
-    		}
+    		//}
     	}
     	catch (FileNotFoundException e) {
     		e.printStackTrace();
@@ -145,16 +179,6 @@ public class MainActivity extends Activity {
 		return list;
 	}
     
-    private List<String> getControllers() {
-    	Cursor cursor = db.query(true, "controllers", new String[] {"number"}, null, null, null, null, null, null, null);
-    	List<String> list = new ArrayList<String>();
-    	
-    	while (cursor.moveToNext()) {
-    		list.add(cursor.getString(0));
-    	}
-    	return list;
-    }
-    
     private void flushRecords() {
          SimpleAdapter adapter = new SimpleAdapter(this, getData(), R.layout.record_item,
          		new String[] {"number", "content"}, new int[] {R.id.record_title, R.id.record_info});
@@ -171,64 +195,7 @@ public class MainActivity extends Activity {
     	}
 	};
     
-    private void getSmsFromPhone() {  
-        
-        List<String> controllers = getControllers();
-        if (controllers.isEmpty())
-        	return;
-        
-        ContentResolver cr = getContentResolver();  
-        
-        String[] projection = new String[] {"_id", "address", "person", "body" };//"_id", "address", "person",, "date", "type  
-        String tmp = "address = '" + controllers.get(0) + "'";
-        for (int i = 1; i < controllers.size(); i++) {
-        	tmp += " or address = '" + controllers.get(i) + "'"; 
-        }
-        String where = "(" + tmp + ")" +"AND _id > " + lastID +" AND date >  "  
-                + (System.currentTimeMillis() - 10 * 1000);  
-        Cursor cur = cr.query(SMS_INBOX, projection, where, null, "date desc");  
-        if (null == cur)  
-            return;  
-        if (cur.moveToNext()) {  
-            String number = cur.getString(cur.getColumnIndex("address"));//手机号  
-            //String name = cur.getString(cur.getColumnIndex("person"));//联系人姓名列表  
-            String body = cur.getString(cur.getColumnIndex("body"));  
-            lastID = cur.getInt(cur.getColumnIndex("_id"));
-            Log.d("FDEBUG", body);
-            Log.d("FDEBUG", lastID + "");
-            //Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
-//            TextView myview = (TextView) this.findViewById(R.id.myText); 
-//            myview.setText(body);  
-            if (runningStatus) {
-	            ContentValues values = new ContentValues();
-	            values.put("number", number);
-	            values.put("content", body);
-	            db.insert("records", null, values);
-	            flushRecords();
-            }
-        }  
-    } 
     
-    public Handler smsHandler = new Handler() {  
-        //这里可以进行回调的操作  
-        //TODO  
-  
-    };  
-    
-    class SmsObserver extends ContentObserver {  
-    	  
-        public SmsObserver(Context context, Handler handler) {  
-            super(handler);  
-        }  
-  
-        @Override  
-        public void onChange(boolean selfChange) {  
-            super.onChange(selfChange);  
-            //每当有新短信到来时，使用我们获取短消息的方法  
-            Log.d("FDEBUG", "get message");
-            getSmsFromPhone();  
-        }  
-    }  
 }
 
 

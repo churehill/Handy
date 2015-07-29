@@ -86,7 +86,6 @@ public class SettingActivity extends Activity {
 		
 		@Override
 		public void onClick(DialogInterface arg0, int arg1) {
-			// TODO Auto-generated method stub
 			Log.d("FDEBUG", "" + arg1);
 			Log.d("FDEBUG", (EditText)dialogLayout.findViewById(R.id.name) + "");
 			String name = ((EditText)dialogLayout.findViewById(R.id.name)).getText().toString();
