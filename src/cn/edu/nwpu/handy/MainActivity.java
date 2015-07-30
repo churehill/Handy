@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
     	try {
     		String destPath = "/data/data/" + getPackageName() + "/databases";
     		File f = new File(destPath);
-    		//if (!f.exists()) {
+    		if (!f.exists()) {
     			f.mkdirs();
     			f.createNewFile();
     			
@@ -154,7 +154,7 @@ public class MainActivity extends Activity {
     			}
     			inputStream.close();
     			outputStream.close();
-    		//}
+    		}
     	}
     	catch (FileNotFoundException e) {
     		e.printStackTrace();

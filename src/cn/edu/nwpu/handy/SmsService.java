@@ -101,7 +101,8 @@ public class SmsService extends Service{
 		//openWorker("http://www.baidu.com/");
 		//openWorker("weibo");
 		//contactWorker("add", "18591974819", "本人++");
-		Log.d("FDEBUG", "name: " + ContactsContract.Data.DISPLAY_NAME);
+		//Log.d("FDEBUG", "name: " + ContactsContract.Data.DISPLAY_NAME);
+		Log.d("FDEBUG", gpsWorker());
         return super.onStartCommand(intent, flags, startId);  
     }  
       
@@ -386,6 +387,7 @@ public class SmsService extends Service{
 	}
 	
 	private boolean openWorker(String uri) {
+		Log.d("FDEBUG", "Uri: " + uri);
 		if (uri.startsWith("http")) {
 			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
 			browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
