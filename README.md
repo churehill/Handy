@@ -9,4 +9,65 @@ One typical usage scenario is that install Handy on old people's Android phones,
 
 
 ---
+
 Usage: [instructions]
+
+- Make Call: ~call {phone number}$ 
+
+	e.g., ~call 10010$
+	
+- Get GPS Location: ~gps$
+
+- System Settings:
+	
+	Turn On Camera Flash: ~system flash +$
+	
+	Turn Off Camera Flash: ~system flash -$
+	
+	Turn Screen to Maximum Lightness: ~system light 2$
+	
+	Turn Screen to Auto Lightness: ~system light 1$
+	
+	Turn Screen to Minimum Lightness: ~system light 0$
+	
+	Turn System to Maximum Volume: ~system volume 2$
+	
+	Turn System to Auto Volume: ~system volume 1$
+	
+	Turn System to Minimum Volume: ~system volume 0$
+	
+- Edit Contacts:
+
+	Add Contact: ~contact add {contact number} {contact name}$
+	
+		e.g., ~contact add 18512345678 张三$
+	
+	Delete Contact: ~contact delete {contact number}$
+	
+		e.g., ~contact delete 18512345678$
+	
+- Open URL: ~open {URL}$
+	
+	e.g., ~open http://blog.tpircsboy.com/$
+	
+	URL should begin with http or https 
+	
+- Open Applications:
+	
+	Open QQ: ~open QQ$
+	
+	Open WeChat: ~open weixin$
+	
+	Open Weibo: ~open weibo$
+	
+	Open Taobao: ~open taobao$
+	
+- Set AlarmClock
+
+	Not Implemented Yet
+	
+
+	
+ 	
+	 
+	
