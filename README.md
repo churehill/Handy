@@ -66,6 +66,15 @@ Usage: [instructions]
 
 	Not Implemented Yet
 	
+Add "1" behind "$" to force client to send job status message back
+		
+		e.g. ~call 18512345678$1 
+	
+		if the call is made successfully, client will send success message back
+	
+		otherwise, it will send fail message back
+		
+		e.g. ~contact add 18512345678 张三$1
 
 	
  	
