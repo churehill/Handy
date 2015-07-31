@@ -14,7 +14,7 @@ Usage: [instructions]
 
 - Make Call: ~call {phone number}$ 
 
-	e.g., ~call 10010$
+		e.g. ~call 10010$
 	
 - Get GPS Location: ~gps$
 
@@ -40,15 +40,15 @@ Usage: [instructions]
 
 	Add Contact: ~contact add {contact number} {contact name}$
 	
-		e.g., ~contact add 18512345678 张三$
+		e.g. ~contact add 18512345678 张三$
 	
 	Delete Contact: ~contact delete {contact number}$
 	
-		e.g., ~contact delete 18512345678$
+		e.g. ~contact delete 18512345678$
 	
 - Open URL: ~open {URL}$
 	
-	e.g., ~open http://blog.tpircsboy.com/$
+		e.g. ~open http://blog.tpircsboy.com/$
 	
 	URL should begin with http or https 
 	
@@ -64,8 +64,12 @@ Usage: [instructions]
 	
 - Set AlarmClock
 
-	Not Implemented Yet
+	Add AlarmClock: ~alarm {hour}:{minute} {title (can be empty)}$
 	
+		e.g. ~alarm 8:13 Morning$
+		e.g. ~alarm 12:45$
+	
+		
 Add "1" behind "$" to force client to send job status message back
 		
 		e.g. ~call 18512345678$1 
