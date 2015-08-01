@@ -3,7 +3,9 @@
     android:id="@+id/controller_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
 
     <EditText
         android:id="@+id/name"
@@ -23,9 +25,99 @@
         android:inputType="phone"
         android:maxLines="1"
         android:singleLine="true" 
-        android:maxLength="11"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"/>
+    
+    <Switch
+        android:id="@+id/permission_call_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_call"
+        android:textSize="16sp" />
+       
+     
+     <Switch
+        android:id="@+id/permission_open_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_open"
+        android:textSize="16sp" />
+     
+     <Switch
+        android:id="@+id/permission_system_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_system"
+        android:textSize="16sp" />
+     
+     <Switch
+        android:id="@+id/permission_gps_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_gps"
+        android:textSize="16sp" />
+     
+     <Switch
+        android:id="@+id/permission_alarm_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_alarm"
+        android:textSize="16sp" />
+     
+     <Switch
+        android:id="@+id/permission_contact_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_contact"
+        android:textSize="16sp" />
+     
+     <Switch
+        android:id="@+id/permission_sms_switch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:checked="false"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/permission_sms"
+        android:textSize="16sp" />
+     
+     <TextView
+            android:id="@+id/hided_dialog_controller_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
     
 <!--     <LinearLayout 
         android:layout_width="match_parent"

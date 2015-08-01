@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -24,15 +26,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -44,6 +47,8 @@ public class MainActivity extends Activity {
     
     private boolean isForeground = true;
     private boolean needFlush = false;
+    
+    private View dialogLayout;
    
     
     @Override
@@ -140,6 +145,7 @@ public class MainActivity extends Activity {
     	try {
     		String destPath = "/data/data/" + getPackageName() + "/databases";
     		File f = new File(destPath);
+    		
     		if (!f.exists()) {
     			f.mkdirs();
     			f.createNewFile();
@@ -168,12 +174,13 @@ public class MainActivity extends Activity {
     
     private List<Map<String, Object>> getData() {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		Cursor cursor = db.query(true, "records", new String[] {"number", "content"}, null, null, null, null, "_id desc", null, null);
+		Cursor cursor = db.query(true, "records", new String[] {"number", "content", "_id"}, null, null, null, null, "_id desc", null, null);
 		
 		while(cursor.moveToNext()) {
 			Map<String, Object> mp = new HashMap<String, Object>(); 
 			mp.put("number", cursor.getString(cursor.getColumnIndex("number")));
 			mp.put("content", cursor.getString(cursor.getColumnIndex("content")));
+			mp.put("_id", cursor.getString(cursor.getColumnIndex("_id")));
 			list.add(mp);
 		}
 		return list;
@@ -181,8 +188,17 @@ public class MainActivity extends Activity {
     
     private void flushRecords() {
          SimpleAdapter adapter = new SimpleAdapter(this, getData(), R.layout.record_item,
-         		new String[] {"number", "content"}, new int[] {R.id.record_title, R.id.record_info});
+         		new String[] {"number", "content", "_id"}, new int[] {R.id.record_title, R.id.record_info, R.id.hided_record_id});
          recordsListView.setAdapter(adapter);
+    }
+    
+    private String getRecordDate(int _id) {
+    	Cursor cursor = db.query("records", new String[] {"date"}, "_id=(?)", new String[] {_id + ""}, null, null, null);
+    	if (cursor.moveToNext()) {
+    		return cursor.getString(cursor.getColumnIndex("date"));
+    	}
+    	else 
+    		return "";
     }
     
     private OnItemClickListener recordItemClickListener = new OnItemClickListener() {
@@ -191,8 +207,30 @@ public class MainActivity extends Activity {
                 long id) {
     		String title = ((TextView)view.findViewById(R.id.record_title)).getText().toString();
     		String info = ((TextView)view.findViewById(R.id.record_info)).getText().toString();
-            Toast.makeText(getBaseContext(), title + "\n" + info, Toast.LENGTH_SHORT).show();
+    		int _id = Integer.parseInt(((TextView)view.findViewById(R.id.hided_record_id)).getText().toString());
+            //Toast.makeText(getBaseContext(), title + "\n" + info, Toast.LENGTH_SHORT).show();
+            dialogLayout = getLayoutInflater().inflate(R.layout.record_dialog, (ViewGroup)findViewById(R.id.record_dialog), false);
+            ((TextView)dialogLayout.findViewById(R.id.record_phonenumber_textedit)).setText(title);
+            ((TextView)dialogLayout.findViewById(R.id.record_date_textedit)).setText(getRecordDate(_id));
+            ((TextView)dialogLayout.findViewById(R.id.record_content_textedit)).setText(info);
+            
+            new AlertDialog.Builder(MainActivity.this).setTitle("Record Detail").setPositiveButton("OK", null).setNegativeButton("Repeat", repeatOnClickListener).setView(dialogLayout).show();
+	
     	}
+	};
+	
+	private DialogInterface.OnClickListener repeatOnClickListener = new DialogInterface.OnClickListener() {
+		
+		@Override
+		public void onClick(DialogInterface arg0, int arg1) {
+			Intent serviceIntent = new Intent(MainActivity.this, SmsService.class);
+			String source = ((EditText)dialogLayout.findViewById(R.id.record_phonenumber_textedit)).getText().toString();
+			String msg = ((EditText)dialogLayout.findViewById(R.id.record_content_textedit)).getText().toString();
+			serviceIntent.putExtra("source", source);
+			serviceIntent.putExtra("msg", msg);
+			startService(serviceIntent);
+			arg0.cancel();
+		}
 	};
     
     

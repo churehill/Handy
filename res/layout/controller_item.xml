@@ -43,6 +43,12 @@
             android:textColor="#ccc"  
             android:textSize="15sp"  />
         
+        <TextView
+            android:id="@+id/hided_controller_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+            
     </RelativeLayout>
     
 
